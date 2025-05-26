@@ -4,24 +4,32 @@ import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.UUID;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
+import entities.Livro;
+import entities.dao.LivroDao;
 import resources.Cores;
 
 public class TelaLivro implements ActionListener{
     Cores cor = new Cores();
     JFrame janela = new JFrame("Livros");
     JPanel painel = new JPanel();
+
+    Boolean atualizar = false;
+    String matriculaLivro;
+    LivroDao livroDao = new LivroDao();
 
     JLabel lblMatricula = new JLabel("Matrícula:");
     JTextField txtMatricula = new JTextField("Sua matrícula aparecerá aqui assim que o livro for cadastrado.");
@@ -54,7 +62,7 @@ public class TelaLivro implements ActionListener{
 
     JButton btnCadastrar = new JButton("Cadastrar");
     JButton btnListar = new JButton("Listar");
-    JButton btnAtualizar = new JButton("Atualizar");
+    JButton btnAtualizar = new JButton("Alterar");
     JButton btnDeletar = new JButton("Deletar");
 
     public void estilizarLabel(JLabel label){
@@ -129,11 +137,15 @@ public class TelaLivro implements ActionListener{
 
         btnCadastrar.setBounds(40, 500, 95, 50);
         estilizarButton(btnCadastrar);
+        btnCadastrar.addActionListener(this);
         btnListar.setBounds(143, 500, 95, 50);
+        btnListar.addActionListener(this);
         estilizarButton(btnListar);
         btnAtualizar.setBounds(247, 500, 95, 50);
+        btnAtualizar.addActionListener(this);
         estilizarButton(btnAtualizar);
         btnDeletar.setBounds(350, 500, 95, 50);
+        btnDeletar.addActionListener(this);
         estilizarButton(btnDeletar);
 
     // ------------- adição à janela -------------
@@ -168,7 +180,7 @@ public class TelaLivro implements ActionListener{
         janela.setVisible(true);
         janela.setResizable(false);
         janela.setLocationRelativeTo(null);
-        janela.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        janela.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     }
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -179,6 +191,98 @@ public class TelaLivro implements ActionListener{
         if (e.getSource() == checkBoxSim) {
             checkBoxSim.setSelected(true);
             checkBoxNao.setSelected(false);
+        }
+        if (e.getSource() == btnCadastrar){
+            
+            String titulo = txtTitulo.getText();
+            String autor = txtAutor.getText();
+            String genero = String.valueOf(menuGenero.getSelectedItem());
+            Boolean edicaoUnica = checkBoxSim.isSelected();
+            Integer numeroPaginas = Integer.parseInt(txtNumPaginas.getText().isEmpty()?"0":txtNumPaginas.getText());
+            Integer anoPublicacao = Integer.parseInt(txtAnoPublicacao.getText().isEmpty()?"0":txtAnoPublicacao.getText());
+            String sinopseTexto = sinopse.getText();
+            String matricula = UUID.randomUUID().toString().substring(0,4);
+
+            if(titulo == "" || autor == "" || genero == "" || anoPublicacao == null || numeroPaginas == null || sinopseTexto == "" ||(checkBoxNao.isSelected() == false && checkBoxSim.isSelected() == false)){
+                JOptionPane.showMessageDialog(null, "Preencha todos os campos.");
+            }else{
+                txtMatricula.setText(matricula);
+                livroDao.cadastrar(new Livro(matricula, titulo, genero, autor, anoPublicacao, numeroPaginas, edicaoUnica, sinopseTexto));
+                JOptionPane.showMessageDialog(null, "Cadastro realizado com sucesso");
+                txtTitulo.setText("");
+                txtAutor.setText("");
+                txtAnoPublicacao.setText("");
+                menuGenero.setSelectedIndex(0);
+                checkBoxNao.setSelected(false);
+                checkBoxSim.setSelected(false);
+                txtNumPaginas.setText("");
+                sinopse.setText("");
+                txtMatricula.setText("Sua matrícula aparecerá aqui assim que o livro for cadastrado.");
+            }
+        }
+        if (e.getSource() == btnListar) {
+            livroDao.listar();
+        }
+        if (e.getSource() == btnAtualizar) {
+            if (!atualizar) {
+                matriculaLivro = JOptionPane.showInputDialog("Digite a matricula do livro: ");
+                Livro livro = livroDao.buscarLivroPorMatricula(matriculaLivro);
+                if (livro != null) {
+                    btnAtualizar.setText("Atualizar");
+                    txtMatricula.setText(matriculaLivro);
+                    txtTitulo.setText(livro.getTitulo());
+                    txtAutor.setText(livro.getAutor());
+                    txtAnoPublicacao.setText(String.valueOf(livro.getAnoPublicacao()));
+                    Integer index = 0;
+                    Integer i = 0;
+                    for (String genero : generos) {
+                        if (genero.equals(String.valueOf(livro.getAnoPublicacao()))) {
+                            index = i;
+                        }
+                        i++;
+                    }
+                    menuGenero.setSelectedIndex(index);
+                    if (livro.getEdicaoUnica()) {
+                        checkBoxSim.setSelected(true);
+                    }else{
+                        checkBoxNao.setSelected(true);
+                    }
+
+                    txtNumPaginas.setText(String.valueOf(livro.getNumPaginas()));
+                    sinopse.setText(livro.getSinopse());
+                }else{
+                    JOptionPane.showMessageDialog(null, "Livro não encontrado");
+                }
+                atualizar = !atualizar;
+            }else{
+                String titulo = txtTitulo.getText();
+                String autor = txtAutor.getText();
+                String genero = String.valueOf(menuGenero.getSelectedItem());
+                Boolean edicaoUnica = checkBoxSim.isSelected();
+                Integer numeroPaginas = Integer.parseInt(txtNumPaginas.getText().isEmpty()?"0":txtNumPaginas.getText());
+                Integer anoPublicacao = Integer.parseInt(txtAnoPublicacao.getText().isEmpty()?"0":txtAnoPublicacao.getText());
+                String sinopseTexto = sinopse.getText();
+
+                livroDao.atualizarLivro(matriculaLivro, titulo, genero, autor, anoPublicacao, numeroPaginas, edicaoUnica, sinopseTexto);
+                btnAtualizar.setText("Alterar");
+                atualizar = !atualizar;
+
+                JOptionPane.showMessageDialog(null, "Livro atualizado com sucesso");
+                txtTitulo.setText("");
+                txtAutor.setText("");
+                txtAnoPublicacao.setText("");
+                menuGenero.setSelectedIndex(0);
+                checkBoxNao.setSelected(false);
+                checkBoxSim.setSelected(false);
+                txtNumPaginas.setText("");
+                sinopse.setText("");
+                txtMatricula.setText("Sua matrícula aparecerá aqui assim que o livro for cadastrado.");
+
+            }
+        }
+        if (e.getSource() == btnDeletar) {
+            matriculaLivro = JOptionPane.showInputDialog("Qual a matricula do livro?");
+            livroDao.deletar(matriculaLivro);
         }
     }
 }

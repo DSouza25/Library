@@ -85,6 +85,7 @@ public class Menu implements ActionListener{
 
         btnLivro.setBounds(300,180, 200, 200);
         ajustarIcon("/resources/images/livrosBranco.png", btnLivro);
+        btnLivro.addActionListener(this);
         estilizarBotao(btnLivro);
 
         btnFuncionario.setBounds(550,180, 200, 200);
@@ -125,9 +126,12 @@ public class Menu implements ActionListener{
         if (e.getSource() == btnUsuario) {
             JOptionPane.showMessageDialog(null, "Funcionando.");
         }
+        if (e.getSource() == btnLivro) {
+            new TelaLivro().abrirTela();
+
+        }
         if (e.getSource() == btnFuncionario) {
-            new TelaFuncionario().criarTela();
-            janela.dispose();
+            new TelaFuncionario().abrirTela();
         }
     }
 }

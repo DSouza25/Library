@@ -1,9 +1,10 @@
 package application;
 
-import screens.TelaLivro;
+import screens.Menu;
 
 public class Main {
     public static void main(String[] args) {
-        new TelaLivro().abrirTela();
+        new Menu().abrirMenu();
     }
+
 }

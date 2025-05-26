@@ -8,14 +8,17 @@ public class Funcionario {
     private Integer matricula;
     private String email;
     private String senha;
+    private String sexo;
 
-    public Funcionario(String nome, Integer idade, String cargo, Integer matricula, String email, String senha) {
+    public Funcionario(String nome, Integer idade, String cargo, Integer matricula, String email, String senha, String sexo) {
         this.nome = nome;
         this.DatadeNasc = idade;
         this.cargo = cargo;
         this.matricula = matricula;
         this.email = email;
         this.senha = senha;
+        this.sexo = sexo;
+
     }
 
     public String getNome() {
@@ -66,15 +69,24 @@ public class Funcionario {
         this.senha = senha;
     }
 
+    public String getSexo() {
+        return sexo;
+    }
+
+    public void setSexo(String sexo) {
+        this.sexo = sexo;
+    }
+
     @Override
     public String toString() {
-        return "Funcionario [nome=" + nome + ", idade=" + DatadeNasc + ", cargo=" + cargo + ", matricula=" + matricula
-                + ", email=" + email + ", senha=" + senha + "]";
+        return "Funcionario \n[Nome=" + nome + ", \nMatricula=" + matricula
+                + ", \nNascimento=" + DatadeNasc + ", \nSexo=" + sexo + ", \nCargo=" + cargo
+                + ", \nEmail=" + email + ", \nSenha=" + senha + "]";
     }
+
+   
 
     
 
 
 }
-
-

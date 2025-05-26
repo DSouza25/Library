@@ -1,18 +1,17 @@
 package entities;
 
-import java.util.Date;
 
 public class Livro {
-    private String matricula; //ok
-    private String titulo; //ok
-    private String genero; //ok
-    private String autor; //ok
-    private String sinopse; //ok
-    private Date anoPublicacao; //ok
-    private Integer numPaginas; //ok
-    private Boolean edicaoUnica; //ok
+    private String matricula; 
+    private String titulo; 
+    private String genero; 
+    private String autor; 
+    private String sinopse; 
+    private Integer anoPublicacao; 
+    private Integer numPaginas; 
+    private Boolean edicaoUnica; 
 
-    public Livro(String matricula, String titulo, String genero, String autor, Date anoPublicacao, Integer numPaginas, Boolean edicaoUnica, String sinopse) {
+    public Livro(String matricula, String titulo, String genero, String autor, Integer anoPublicacao, Integer numPaginas, Boolean edicaoUnica, String sinopse) {
         this.matricula = matricula;
         this.titulo = titulo;
         this.genero = genero;
@@ -47,11 +46,11 @@ public class Livro {
         this.autor = autor;
     }
 
-    public Date getAnoPublicacao() {
+    public Integer getAnoPublicacao() {
         return anoPublicacao;
     }
 
-    public void setAnoPublicacao(Date anoPublicacao) {
+    public void setAnoPublicacao(Integer anoPublicacao) {
         this.anoPublicacao = anoPublicacao;
     }
 
@@ -86,6 +85,14 @@ public class Livro {
 
     public void setMatricula(String matricula) {
         this.matricula = matricula;
+    }
+
+    public String getSinopse() {
+        return sinopse;
+    }
+
+    public void setSinopse(String sinopse) {
+        this.sinopse = sinopse;
     }
     
 
